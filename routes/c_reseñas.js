@@ -1,33 +1,52 @@
 var express = require('express');
 const ReseñasModel = require('../Modelos/Review');
+const UserModel = require('../Modelos/User');
 var router = express.Router();
+
+const userID= '1';
+
+const newUser = new UserModel({
+    userID: userID,
+    username: "Juan Perez",
+    email: "jperez@gmail.com",
+    password: "1234"
+});
+
+const review1 = new ReseñasModel({
+    titulo: 'Excelente producto',
+    contenido: 'Me encantó este producto. Muy recomendado.',
+    rating: 5,
+    product: '1',
+    user: userID.username, 
+    createdAt: new Date()
+});
+
+const review2 = new ReseñasModel({
+    titulo: 'Regular el producto',
+    contenido: 'Esta regular. No lo recomiendo porque...',
+    rating: 2,
+    product: '1',
+    user: '1', 
+    createdAt: new Date()
+});
+
+var reviews = [review1, review2];
 
 router.get('/', function(req, res) {
   res.send('Hola');
 });
 
+
 router.get('/resenas', async (req, res)=> {
     try {
-        const review1 = new ReseñasModel({
-            titulo: 'Excelente producto',
-            contenido: 'Me encantó este producto. Muy recomendado.',
-            rating: 5,
-            product: '1',
-            user: '1', 
-            createdAt: new Date()
-        });
-          const review2 = new ReseñasModel({
-            titulo: 'Bueno pero podría mejorar',
-            contenido: 'El producto es decente, pero hay algunos aspectos que podrían mejorar.',
-            rating: 3,
-            product: '1',
-            user: '1',
-            createdAt: new Date()
-        });
-        const nuevosReviews = await Promise.all([review1.save(), review2.save()]);
 
-        //const reviews = await Review.find();
-        res.json(nuevosReviews);
+        //const reviews = await ReseñasModel.find();
+
+        if (reviews.length === 0) {
+            res.json({ message: 'No se encontraron reseñas.' });
+        }
+        res.json(reviews);
+
       } catch (error) {
         res.status(500).json({ message: error.message });
       }
