@@ -12,23 +12,28 @@ const newUser = new UserModel({
     password: "1234"
 });
 
-const review1 = new ReseñasModel({
+var review1 = new ReseñasModel({
     titulo: 'Excelente producto',
     contenido: 'Me encantó este producto. Muy recomendado.',
     rating: 5,
     product: '1',
-    user: userID.username, 
+    user: newUser._id, 
     createdAt: new Date()
 });
 
-const review2 = new ReseñasModel({
+var review2 = new ReseñasModel({
     titulo: 'Regular el producto',
     contenido: 'Esta regular. No lo recomiendo porque...',
     rating: 2,
     product: '1',
-    user: '1', 
+    user: newUser._id.user, 
     createdAt: new Date()
 });
+
+review1 = {
+  titulo: review1.titulo,
+  nombreUser: review1.user.username
+}
 
 var reviews = [review1, review2];
 
@@ -45,7 +50,11 @@ router.get('/resenas', async (req, res)=> {
         if (reviews.length === 0) {
             res.json({ message: 'No se encontraron reseñas.' });
         }
-        res.json(reviews);
+        
+        res.json({
+          data: reviews,
+
+        });
 
       } catch (error) {
         res.status(500).json({ message: error.message });
