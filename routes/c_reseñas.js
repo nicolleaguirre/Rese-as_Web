@@ -41,7 +41,6 @@ var review2 = new ReseñasModel({
     rating: 4,
     product: pelicula._id,
     user: newUser._id, 
-    nombreuser: newUser.username,
     createdAt: new Date(2024, 3, 8)
 });
 
@@ -51,7 +50,6 @@ var review3 = new ReseñasModel({
   rating: 4,
   product: cocaCola._id,
   user: newUser._id, 
-  nombreuser: newUser.username,
   createdAt: new Date(2024, 3, 8)
 });
 
@@ -69,14 +67,29 @@ router.get('/resenas', async (req, res)=> {
         if (reviews.length === 0) {
             res.json({ message: 'No se encontraron reseñas.' });
         }
-        
         res.json({
-          data: reviews,
+          data: reviews
         });
 
       } catch (error) {
         res.status(500).json({ message: error.message });
       }
+});
+
+router.get('/mis_resenas/:idUser', (req, res)=> {
+  try{
+    var misReviews = [];
+    reviews.forEach(obj => {
+      if(obj.user.equals(req.params.idUser)){
+        misReviews.push(obj);
+      }
+    });
+
+    res.json({data: misReviews});
+
+  }catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 function añadirCamposFaltantes(){
@@ -86,7 +99,8 @@ function añadirCamposFaltantes(){
     rating: review1.rating,
     product: pelicula.nombre,
     categoria: pelicula.categoria,
-    user: newUser.username, 
+    user: review1._id,
+    userName: newUser.username, 
     createdAt: moment(review1.createdAt).format('DD/MM/YYYY'),
     linkImagen: "https://upload.wikimedia.org/wikipedia/en/a/af/The_Godfather%2C_The_Game.jpg"
   };
@@ -97,7 +111,8 @@ function añadirCamposFaltantes(){
     rating: review2.rating,
     product: pelicula.nombre,
     categoria: pelicula.categoria,
-    user: newUser.username, 
+    user: review2._id,
+    userName: newUser.username, 
     createdAt: moment(review2.createdAt).format('DD/MM/YYYY'),
     linkImagen: "https://upload.wikimedia.org/wikipedia/en/a/af/The_Godfather%2C_The_Game.jpg"
   };
@@ -107,7 +122,8 @@ function añadirCamposFaltantes(){
     rating: review3.rating,
     product: cocaCola.nombre,
     categoria: cocaCola.categoria,
-    user: newUser.username, 
+    user: review3._id,
+    userName: newUser.username, 
     createdAt: moment(review3.createdAt).format('DD/MM/YYYY'),
     linkImagen: "https://coca-colafemsa.com/wp-content/uploads/2019/11/3-1.png"
   };

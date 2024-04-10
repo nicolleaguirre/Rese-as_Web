@@ -10,14 +10,22 @@ const User = require('../Modelos/User');
 
 var router = express.Router();
 
+var sesionIniciada = false;
+
+const usuarioPrueba = new User({
+  username: "Juan Prueba",
+  email: "prueba@gmail.com",
+  password: "123456"
+});
+
 // Middleware para registrar las solicitudes
 router.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} a ${req.url}`);
   next();
 });
-
-
 router.use(express.json());
+
+
 
 //mongoose.connect('mongodb://localhost:27017/myapp', {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -125,11 +133,12 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     
     // Verificar si las credenciales coinciden con los datos estáticos
-    if (email !== 'prueba@gmail.com' || password !== '123456') {
+    if (email !== usuarioPrueba.email || password !== usuarioPrueba.password) {
       return res.status(400).json({ msg: 'Correo o contraseña incorrectos' });
     }
 
     // Si las credenciales son válidas, enviar un mensaje de éxito
+    sesionIniciada = true;
     res.status(200).json({ msg: 'Inicio de sesión exitoso' });
 
     //res.redirect('/categories');
@@ -137,6 +146,12 @@ router.post('/login', async (req, res) => {
   } catch(err) {
     res.status(500).json({ msg: 'Error del servidor' });
   }
+});
+
+router.get('/idUserIniciado', (req, res)=>{
+  if(sesionIniciada == false) res.json({msg: 'No han iniciado sesión'});
+  res.json({msg: usuarioPrueba._id});
+  
 });
 
 module.exports = router;
