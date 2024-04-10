@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const CategoriasEnum = require('./Categorias');
+const CategoriasEnum = require('../Categorias');
 
 const ProductSchema = new mongoose.Schema({
   nombre: { 
@@ -13,7 +13,7 @@ const ProductSchema = new mongoose.Schema({
   categoria: { 
     type: String, 
     required: true,
-    enum: CategoriasEnum
+    //enum: CategoriasEnum
   },
   precio: { 
     type: Number, 
