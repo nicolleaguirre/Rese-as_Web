@@ -2,7 +2,7 @@ var express = require('express');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-module.exports = (sequelize) => {
+
   const ReseñasModel = require('../Modelos/Review');
   const UserModel = require('../Modelos/User');
   const ProductoModel = require('../Modelos/Producto');
@@ -43,5 +43,4 @@ module.exports = (sequelize) => {
     }
   });
 
-  return router;
-};
+module.exports = router;
