@@ -4,10 +4,20 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
+const { Pool } = require('pg');
+const sequelize = require('./sequelize');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var reseñasRouter = require('./routes/c_reseñas')
+
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'ReseñasPrueba',
+  password: 'tang',
+  port: 5432,
+});
 
 var app = express();
 
@@ -30,7 +40,6 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-
 app.use(function(err, req, res, next) {
 
   res.locals.message = err.message;
@@ -45,5 +54,28 @@ const port = 4001;
 app.listen(port, () => {
   console.log(`La aplicación está escuchando en http://localhost:${port}`);
 });
+
+app.get('', (req, res) =>{
+  res.send("Hola");
+});
+
+pool.query('SELECT NOW()', (error, result) => {
+  if (error) {
+    console.error('Error al ejecutar la consulta:', error);
+  } else {
+    console.log('La base de datos está conectada. Hora actual:', result.rows[0].now);
+  }
+});
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexión establecida con la base de datos');
+    await sequelize.sync();
+    console.log('Modelos sincronizados con la base de datos');
+  } catch (error) {
+    console.error('Error al conectar y sincronizar con la base de datos:', error);
+  }
+})();
 
 module.exports = app;

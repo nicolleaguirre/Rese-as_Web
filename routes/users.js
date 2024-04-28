@@ -12,11 +12,11 @@ var router = express.Router();
 
 var sesionIniciada = false;
 
-const usuarioPrueba = new User({
+/*const usuarioPrueba = new User({
   username: "Juan Prueba",
   email: "prueba@gmail.com",
   password: "123456"
-});
+});*/
 
 // Middleware para registrar las solicitudes
 router.use((req, res, next) => {
@@ -25,7 +25,15 @@ router.use((req, res, next) => {
 });
 router.use(express.json());
 
+router.get('/prueba', async (req, res) => {
+  try {
+    const usuarios = await User.findAll();
+    res.status(201).json(usuarios);
+  } catch (error) {
 
+    res.status(500).json({ error: error });
+  }
+});
 
 //mongoose.connect('mongodb://localhost:27017/myapp', {useNewUrlParser: true, useUnifiedTopology: true});
 

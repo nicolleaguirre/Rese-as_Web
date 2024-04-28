@@ -3,14 +3,14 @@ const ReseñasModel = require('../Modelos/Review');
 const UserModel = require('../Modelos/User');
 const ProductoModel = require('../Modelos/Producto');
 const moment = require('moment');
+const Sequelize = require('sequelize');
 
 var router = express.Router();
 
-const newUser = new UserModel({
-    username: "Juan Perez",
-    email: "jperez@gmail.com",
-    password: "1234"
-});
+newUser = {
+  _id: 1,
+  
+}
 
 const pelicula = new ProductoModel({
   nombre: "The Godfather",
@@ -20,7 +20,7 @@ const pelicula = new ProductoModel({
 });
 
 const cocaCola = new ProductoModel({
-  nombre: "Cocacola 350 ml",
+  nombre: "Cocacola",
   descripcion: "",
   categoria: "Producto",
   precio: 3000
@@ -92,7 +92,7 @@ router.get('/mis_resenas/:idUser', (req, res)=> {
   }
 });
 
-function añadirCamposFaltantes(){
+/*function añadirCamposFaltantes(){
   review1 = {
     titulo: review1.titulo,
     contenido: review1.contenido,
@@ -129,6 +129,6 @@ function añadirCamposFaltantes(){
   };
   return [review1, review2, review3];
 
-}
+}*/
 
 module.exports = router;
