@@ -28,10 +28,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/resenas', reseñasRouter);
 
 // Importar modelos
-const Comentario = require('./models/Comentario')(sequelize, Sequelize.DataTypes);
-const Producto = require('./models/Producto')(sequelize, Sequelize.DataTypes);
-const Review = require('./models/Review')(sequelize, Sequelize.DataTypes);
-const User = require('./models/User')(sequelize, Sequelize.DataTypes);
+const Comentario = require('./Modelos/Comentario')(sequelize, Sequelize.DataTypes);
+const Producto = require('./Modelos/Producto')(sequelize, Sequelize.DataTypes);
+const Review = require('./Modelos/Review')(sequelize, Sequelize.DataTypes);
+const User = require('./Modelos/User')(sequelize, Sequelize.DataTypes);
 
 // Definir asociaciones
 Comentario.associate(sequelize.models);
