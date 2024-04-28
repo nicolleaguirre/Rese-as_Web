@@ -1,5 +1,7 @@
-module.exports = (sequelize, DataTypes) => {
-  const Producto = sequelize.define('Producto', {
+const { DataTypes } = require('sequelize');
+const sequelize = require('../sequelize');
+
+  const Producto = sequelize.define('Productos', {
     nombre: {
       type: DataTypes.STRING,
       allowNull: false
@@ -10,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     categoria: {
       type: DataTypes.ENUM,
-      values: ['Aparatos Electrónicos', 'Ropa', 'Libros', 'Películas', 'Series', 'Restaurantes', 'Videojuegos', 'Lugares Turísticos'],
+      values: ['Libro', 'Pelicula', 'Serie', 'Restaurante', 'Videojuego'],
       allowNull: false
     },
     precio: {
@@ -19,5 +21,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  return Producto;
-};
+module.exports = Producto;
+

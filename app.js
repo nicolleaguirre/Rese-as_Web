@@ -4,12 +4,11 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const sequelize = require('./config/conexion');
-const Sequelize = require('sequelize');
+const sequelize = require('./sequelize');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const reseñasRouter = require('./routes/c_reseñas')(sequelize);
+const reseñasRouter = require('./routes/c_reseñas');
 const app = express();
 
 app.use(cors());
@@ -28,23 +27,35 @@ app.use('/api/resenas', reseñasRouter);
 
 
 // Importar modelos
-const Comentario = require('./Modelos/Comentario')(sequelize, Sequelize.DataTypes);
-const Producto = require('./Modelos/Producto')(sequelize, Sequelize.DataTypes);
-const Review = require('./Modelos/Review')(sequelize, Sequelize.DataTypes);
-const User = require('./Modelos/User')(sequelize, Sequelize.DataTypes);
+//const Comentario = require('./Modelos/Comentario')(sequelize, Sequelize.DataTypes);
+const Producto = require('./Modelos/Producto');
+const User = require('./Modelos/User');
+const Review = require('./Modelos/Review');
 
 // Definir asociaciones
-Comentario.associate(sequelize.models);
-Review.associate(sequelize.models);
+//Comentario.associate(sequelize.models);
+
+Review.associate({ Producto, User });
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexión establecida con la base de datos');
+    await sequelize.sync();
+    console.log('Modelos sincronizados con la base de datos');
+  } catch (error) {
+    console.error('Error al conectar y sincronizar con la base de datos:', error);
+  }
+})();
 
 // Sincronizar modelos con la base de datos
-sequelize.sync({ force: true })
+/*sequelize.sync({ force: true })
   .then(() => {
     console.log('Tablas sincronizadas correctamente.');
   })
   .catch((error) => {
     console.error('Error al sincronizar tablas:', error);
-  });
+  });*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
