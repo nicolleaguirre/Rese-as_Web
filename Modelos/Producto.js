@@ -1,24 +1,26 @@
-const mongoose = require('mongoose');
-const CategoriasEnum = require('../Categorias');
+const CategoriasEnum = require('./Categorias');
 
-const ProductSchema = new mongoose.Schema({
-  nombre: { 
-    type: String, 
-    required: true 
-  },
-  descripcion: { 
-    type: String, 
-    required: true 
-  },
-  categoria: { 
-    type: String, 
-    required: true,
-    //enum: CategoriasEnum
-  },
-  precio: { 
-    type: Number, 
-    required: true 
-  }
-});
+module.exports = (sequelize, DataTypes) => {
+  const Producto = sequelize.define('Producto', {
+    nombre: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    descripcion: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    categoria: {
+      type: DataTypes.ENUM,
+      values: CategoriasEnum,
+      allowNull: false
+    },
+    precio: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    }
+  });
 
-module.exports = mongoose.model('Producto', ProductSchema);
+  return Producto;
+};
+
