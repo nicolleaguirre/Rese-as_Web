@@ -1,28 +1,19 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const cors = require('cors');
-const { Pool } = require('pg');
-const sequelize = require('./sequelize');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var reseñasRouter = require('./routes/c_reseñas')
+const sequelize = require('/conexion_db');
 
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'ReseñasPrueba',
-  password: 'tang',
-  port: 5432,
-});
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const reseñasRouter = require('./routes/c_reseñas');
 
-var app = express();
+const app = express();
 
 app.use(cors());
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -36,16 +27,37 @@ app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/resenas', reseñasRouter);
 
+// Importar modelos
+const Comentario = require('./models/Comentario')(sequelize, Sequelize.DataTypes);
+const Producto = require('./models/Producto')(sequelize, Sequelize.DataTypes);
+const Review = require('./models/Review')(sequelize, Sequelize.DataTypes);
+const User = require('./models/User')(sequelize, Sequelize.DataTypes);
+
+// Definir asociaciones
+Comentario.associate(sequelize.models);
+Review.associate(sequelize.models);
+
+// Sincronizar modelos con la base de datos
+sequelize.sync({ force: true })
+  .then(() => {
+    console.log('Tablas sincronizadas correctamente.');
+  })
+  .catch((error) => {
+    console.error('Error al sincronizar tablas:', error);
+  });
+
+// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
+// error handler
 app.use(function(err, req, res, next) {
-
+  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-
+  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
@@ -55,27 +67,8 @@ app.listen(port, () => {
   console.log(`La aplicación está escuchando en http://localhost:${port}`);
 });
 
-app.get('', (req, res) =>{
+app.get('', (req, res) => {
   res.send("Hola");
 });
-
-pool.query('SELECT NOW()', (error, result) => {
-  if (error) {
-    console.error('Error al ejecutar la consulta:', error);
-  } else {
-    console.log('La base de datos está conectada. Hora actual:', result.rows[0].now);
-  }
-});
-
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('Conexión establecida con la base de datos');
-    await sequelize.sync();
-    console.log('Modelos sincronizados con la base de datos');
-  } catch (error) {
-    console.error('Error al conectar y sincronizar con la base de datos:', error);
-  }
-})();
 
 module.exports = app;
