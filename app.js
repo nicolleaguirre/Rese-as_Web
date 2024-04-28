@@ -4,13 +4,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-
-const sequelize = require('/conexion_db');
+const sequelize = require('./config/conexion');
+const Sequelize = require('sequelize');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const reseñasRouter = require('./routes/c_reseñas');
-
+const reseñasRouter = require('./routes/c_reseñas')(sequelize);
 const app = express();
 
 app.use(cors());
@@ -26,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/resenas', reseñasRouter);
+
 
 // Importar modelos
 const Comentario = require('./Modelos/Comentario')(sequelize, Sequelize.DataTypes);

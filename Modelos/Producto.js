@@ -1,5 +1,3 @@
-const CategoriasEnum = require('./Categorias');
-
 module.exports = (sequelize, DataTypes) => {
   const Producto = sequelize.define('Producto', {
     nombre: {
@@ -12,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     categoria: {
       type: DataTypes.ENUM,
-      values: CategoriasEnum,
+      values: ['Aparatos Electrónicos', 'Ropa', 'Libros', 'Películas', 'Series', 'Restaurantes', 'Videojuegos', 'Lugares Turísticos'],
       allowNull: false
     },
     precio: {
@@ -23,4 +21,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Producto;
 };
-
