@@ -18,12 +18,18 @@ router.get('/resenas', async (req, res) => {
       include: [
         { model: UserModel, as: 'User', attributes: ['username'] },
         { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria'] }
-        
       ]
     });
     if (reviews2.length === 0) {
       res.json({ message: 'No se encontraron reseñas.' });
     }
+    reviews2.forEach(review => {
+      var fecha = new Date(review.createdAt);
+      console.log(fecha);
+      review.createdAt = modificarFecha(fecha);
+      console.log(review.createdAt);
+    });
+
     res.json({
       data: reviews2,
     });
@@ -31,6 +37,19 @@ router.get('/resenas', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+function modificarFecha(fecha) {
+  if (!(fecha instanceof Date)) {
+    return "Fecha inválida";
+  }
+  // Obtener los componentes de la fecha
+  const dia = fecha.getDate().toString().padStart(2, '0');
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+  const año = fecha.getFullYear();
+
+  // Formatear la fecha en el formato deseado (DD/MM/YYYY)
+  return `${dia}/${mes}/${año}`;
+}
 
 router.get('/mis_resenas/:idUser', (req, res) => {
   try {
