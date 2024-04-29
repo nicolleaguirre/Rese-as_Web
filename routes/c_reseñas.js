@@ -65,5 +65,30 @@ router.get('/mis_resenas/:idUser', (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+router.post('/crear_resena', async (req, res) => {
+  try {
+    const nuevaResena = await ReseñasModel.create(req.body);
+    const resenaConProducto = await ReseñasModel.findByPk(nuevaResena.id, {
+      include: [
+        { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria'] }
+      ]
+    });
+    res.status(201).json({ message: 'Reseña creada correctamente', data: resenaConProducto });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+router.get('/mis_resenas', async (req, res) => {
+  try {
+    const reviews = await ReseñasModel.findAll({
+      include: [
+        { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria'] }
+      ]
+    });
+    res.json({ data: reviews });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;
