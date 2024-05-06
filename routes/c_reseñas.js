@@ -58,12 +58,11 @@ router.get('/mis_resenas/:usuarioID', async (req, res) => {
     });
     if (reviews.length === 0) {
       res.json({ message: 'No se encontraron reseñas.' });
+    }else{
+      res.json({
+        data: reviews,
+      });
     }
-
-    res.json({
-      data: reviews,
-    });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
