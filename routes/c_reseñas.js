@@ -23,13 +23,7 @@ router.get('/resenas', async (req, res) => {
     if (reviews2.length === 0) {
       res.json({ message: 'No se encontraron reseñas.' });
     }
-    reviews2.forEach(review => {
-      var fecha = new Date(review.createdAt);
-      console.log(fecha);
-      review.createdAt = modificarFecha(fecha);
-      console.log(review.createdAt);
-    });
-
+    
     res.json({
       data: reviews2,
     });
@@ -51,16 +45,25 @@ function modificarFecha(fecha) {
   return `${dia}/${mes}/${año}`;
 }
 
-router.get('/mis_resenas/:idUser', (req, res) => {
+router.get('/mis_resenas/:usuarioID', async (req, res) => {
   try {
-    var misReviews = [];
-    reviews.forEach((obj) => {
-      if (obj.user.equals(req.params.idUser)) {
-        misReviews.push(obj);
-      }
+    const usuarioID = req.params.usuarioID;
+    const reviews = await ReseñasModel.findAll({
+      include: [
+        { model: UserModel, as: 'User', attributes: ['username'] },
+        { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria'] }
+      ],
+      where: {usuarioID}
+
+    });
+    if (reviews.length === 0) {
+      res.json({ message: 'No se encontraron reseñas.' });
+    }
+
+    res.json({
+      data: reviews,
     });
 
-    res.json({ data: misReviews });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -74,18 +77,6 @@ router.post('/crear_resena', async (req, res) => {
       ]
     });
     res.status(201).json({ message: 'Reseña creada correctamente', data: resenaConProducto });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-router.get('/mis_resenas', async (req, res) => {
-  try {
-    const reviews = await ReseñasModel.findAll({
-      include: [
-        { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria'] }
-      ]
-    });
-    res.json({ data: reviews });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
