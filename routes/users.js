@@ -3,7 +3,6 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
-const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const User = require('../Modelos/User');
@@ -50,15 +49,17 @@ router.post('/login/', async (req, res) => {
       return res.status(404).json({ msg: 'Usuario no encontrado' });
     }
     console.log(usuario);
+    
     //const contrasenaValida = await bcrypt.compare(password, usuario.password);
-    const contrasenaValida = password == usuario.password;
+    //const contrasenaValida = password == usuario.password;
+    const contrasenaValida = await bcrypt.compare(password, usuario.password);
     if (!contrasenaValida) {
       return res.status(401).json({ msg: 'Contraseña incorrecta' });
     };
+    const token = jwt.sign({ id: usuario.id }, 'tu_clave_secreta', {expiresIn: '1h'});
     //const token = jwt.sign({ username: usuario.username }, 'ClaveResenas', { expiresIn: '10h' });
     //console.log(token);
-    res.status(200).json({ usuario });
-    
+    res.status(200).json({ usuario, token });
 
   } catch(err) {
     res.status(500).json({ msg: 'Error del servidor' });
@@ -110,13 +111,6 @@ router.post('/registrar', async (req, res) => {
       console.error(err.message);
       res.status(500).json({ msg: 'Error del servidor' });
     }
-});
-
-
-router.get('/idUserIniciado', (req, res)=>{
-  if(sesionIniciada == false) res.json({msg: 'No han iniciado sesión'});
-  res.json({msg: usuarioPrueba._id});
-  
 });
 
 module.exports = router;

@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const sequelize = require('./sequelize');
+const {DataTypes} = require('sequelize')
+const Token = require('./Modelos/token')(sequelize, DataTypes);
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -71,6 +73,17 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.post('/logout', async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1]; 
+    await Token.invalidate(token); 
+    res.send('Cierre de sesión exitoso.');
+  } catch (error) {
+    console.error('Error al cerrar la sesión:', error);
+    res.status(500).send('Ocurrió un error al cerrar la sesión.');
+  }
 });
 
 const port = 4001;

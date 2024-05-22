@@ -8,11 +8,11 @@ const sequelize = require('../sequelize');
     },
     descripcion: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     categoria: {
       type: DataTypes.ENUM,
-      values: ['Libro', 'Pelicula', 'Serie', 'Restaurante', 'Videojuego'],
+      values: ['Pelicula', 'Serie', 'Restaurante', 'Producto', 'Servicio'],
       allowNull: false
     },
     precio: {

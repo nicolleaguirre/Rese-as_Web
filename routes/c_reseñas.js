@@ -23,27 +23,27 @@ router.get('/resenas', async (req, res) => {
     if (reviews2.length === 0) {
       res.json({ message: 'No se encontraron reseñas.' });
     }
-    
+    const groupedReviews = reviews2.reduce((acc, review) => {
+      const categoria = review.Producto.categoria;
+      if (!acc[categoria]) {
+        acc[categoria] = [];
+      }
+      acc[categoria].push(review);
+      return acc;
+    }, {});
+
+    // Formatear el resultado para mostrar las reseñas agrupadas por categoría
+    const formattedResult = Object.keys(groupedReviews).map(categoria => ({
+      categoria,
+      reviews: groupedReviews[categoria]
+    }));
     res.json({
-      data: reviews2,
+      data: formattedResult,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-function modificarFecha(fecha) {
-  if (!(fecha instanceof Date)) {
-    return "Fecha inválida";
-  }
-  // Obtener los componentes de la fecha
-  const dia = fecha.getDate().toString().padStart(2, '0');
-  const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-  const año = fecha.getFullYear();
-
-  // Formatear la fecha en el formato deseado (DD/MM/YYYY)
-  return `${dia}/${mes}/${año}`;
-}
 
 router.get('/mis_resenas/:usuarioID', async (req, res) => {
   try {
@@ -69,13 +69,21 @@ router.get('/mis_resenas/:usuarioID', async (req, res) => {
 });
 router.post('/crear_resena', async (req, res) => {
   try {
-    const nuevaResena = await ReseñasModel.create(req.body);
-    const resenaConProducto = await ReseñasModel.findByPk(nuevaResena.id, {
-      include: [
-        { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria'] }
-      ]
-    });
-    res.status(201).json({ message: 'Reseña creada correctamente', data: resenaConProducto });
+    const precio = 0
+    const {titulo, categoria, nombre, rating, userID, contenido} = req.body;
+    const Producto = await ProductoModel.findOne({where: {nombre}});
+    var nuevaResena;
+    var productoID;
+    if (!Producto) {
+      const nuevoProducto = await ProductoModel.create({nombre, precio, categoria });
+      productoID = nuevoProducto.id;
+      nuevaResena = await ReseñasModel.create({titulo, contenido, rating, userID, productoID  });
+      res.send().json({msg: "Se añadio correctamente"});
+    } else{
+      productoID = Producto.id;
+      nuevaResena = await ReseñasModel.create({titulo, contenido, rating, userID, productoID  });
+      res.send().json({msg: "Se añadio correctamente"});
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
