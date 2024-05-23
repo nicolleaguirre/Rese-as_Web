@@ -12,7 +12,7 @@ const sequelize = require('../sequelize');
     },
     categoria: {
       type: DataTypes.ENUM,
-      values: ['Pelicula', 'Serie', 'Restaurante', 'Producto', 'Servicio'],
+      values: ['Película', 'Serie', 'Restaurante', 'Producto', 'Servicio'],
       allowNull: false
     },
     precio: {

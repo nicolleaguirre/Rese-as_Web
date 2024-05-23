@@ -23,6 +23,10 @@ const Review = sequelize.define('Reviews', {
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
+  },
+  estado: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   }
 });
 

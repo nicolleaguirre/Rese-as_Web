@@ -69,20 +69,20 @@ router.get('/mis_resenas/:usuarioID', async (req, res) => {
 });
 router.post('/crear_resena', async (req, res) => {
   try {
-    const precio = 0
-    const {titulo, categoria, nombre, rating, userID, contenido} = req.body;
+    console.log(req.body);
+    const {titulo, categoria, nombre, rating, usuarioID, contenido, precio} = req.body;
     const Producto = await ProductoModel.findOne({where: {nombre}});
     var nuevaResena;
     var productoID;
     if (!Producto) {
       const nuevoProducto = await ProductoModel.create({nombre, precio, categoria });
       productoID = nuevoProducto.id;
-      nuevaResena = await ReseñasModel.create({titulo, contenido, rating, userID, productoID  });
-      res.send().json({msg: "Se añadio correctamente"});
-    } else{
+      nuevaResena = await ReseñasModel.create({titulo, contenido, rating, productoID, usuarioID });
+      res.json({msg: "Se añadio correctamente"});
+    } else {
       productoID = Producto.id;
-      nuevaResena = await ReseñasModel.create({titulo, contenido, rating, userID, productoID  });
-      res.send().json({msg: "Se añadio correctamente"});
+      nuevaResena = await ReseñasModel.create({titulo, contenido, rating, productoID, usuarioID });
+      res.json({msg: "Se añadio correctamente"});
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
