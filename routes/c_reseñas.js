@@ -111,4 +111,34 @@ router.delete('/eliminar/:id', async (req, res)=>{
   res.json({ message: 'Reseña marcada como inactiva' });
 });
 
+router.get('/resena/:id', async (req, res)=>{
+  const id = req.params.id;
+  const reseña = await ReseñasModel.findOne({ where: {id},
+    include: [
+      { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria', 'precio'] }
+    ]});
+  if(!reseña){
+    res.json({msg: 'No se encontró la reseña'});
+  }else{
+    res.json({reseña: reseña});
+  }
+});
+
+router.put('/editar_resena/:id', async (req, res)=>{
+  const {id} = req.params
+  console.log(id);
+  const { titulo, rating, contenido} = req.body;
+  const result=await ReseñasModel.update(
+    {
+      titulo: titulo,
+      contenido: contenido,
+      rating: rating
+    }, {where: {id : id}}
+  );
+  if(result[0]===0){
+    return res.json({message: 'Reseña no encontrada'});
+  }
+  res.json({ message: 'Reseña actualizada' });
+});
+
 module.exports = router;
