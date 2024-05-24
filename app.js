@@ -11,6 +11,7 @@ const Token = require('./Modelos/token')(sequelize, DataTypes);
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const reseñasRouter = require('./routes/c_reseñas');
+const comentariosRouter = require('./routes/c_comentarios');
 const app = express();
 
 app.use(cors());
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/resenas', reseñasRouter);
+app.use('/api/comentarios', comentariosRouter);
 
 
 // Importar modelos
@@ -33,11 +35,13 @@ app.use('/api/resenas', reseñasRouter);
 const Producto = require('./Modelos/Producto');
 const User = require('./Modelos/User');
 const Review = require('./Modelos/Review');
+const Comentario = require('./Modelos/Comentario');
 
 // Definir asociaciones
 //Comentario.associate(sequelize.models);
 
 Review.associate({ Producto, User });
+Comentario.associate({Review, User});
 
 (async () => {
   try {

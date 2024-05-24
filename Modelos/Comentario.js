@@ -1,24 +1,24 @@
-module.exports = (sequelize, DataTypes) => {
-  const Comentario = sequelize.define('Comentario', {
-    titulo: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
+const { DataTypes } = require('sequelize');
+const sequelize = require('../sequelize');
+
+  const Comentario = sequelize.define('Comentarios', {
     contenido: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    fecha: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
-    }
+    calificacion: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min: 1,
+        max: 5
+      }
+    },
   });
 
   Comentario.associate = (models) => {
-    Comentario.belongsTo(models.User, { foreignKey: 'usuarioId', as: 'usuario' });
-    Comentario.belongsTo(models.Review, { foreignKey: 'reseñaId', as: 'reseña' });
+    Comentario.belongsTo(models.User, { foreignKey: 'usuarioID', as: 'User' });
+    Comentario.belongsTo(models.Review, { foreignKey: 'reseñaID', as: 'Review' });
   };
 
-  return Comentario;
-};
-
+module.exports = Comentario;
