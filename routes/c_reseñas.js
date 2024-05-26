@@ -113,8 +113,10 @@ router.delete('/eliminar/:id', async (req, res)=>{
 
 router.get('/resena/:id', async (req, res)=>{
   const id = req.params.id;
+  console.log(id);
   const reseña = await ReseñasModel.findOne({ where: {id},
     include: [
+      { model: UserModel, as: 'User', attributes: ['username'] },
       { model: ProductoModel, as: 'Producto', attributes: ['nombre', 'categoria', 'precio'] }
     ]});
   if(!reseña){
