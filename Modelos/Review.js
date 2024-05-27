@@ -27,6 +27,10 @@ const Review = sequelize.define('Reviews', {
   estado: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  reportes: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   }
 });
 

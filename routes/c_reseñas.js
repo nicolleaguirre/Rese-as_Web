@@ -143,4 +143,33 @@ router.put('/editar_resena/:id', async (req, res)=>{
   res.json({ message: 'Reseña actualizada' });
 });
 
+// Añadir ruta para reportar una reseña
+router.post('/reportar', async (req, res) => {
+  const { reseñaId } = req.body;
+
+  try {
+    const review = await ReseñasModel.findByPk(reseñaId);
+
+    if (!review) {
+      return res.status(404).send({ error: 'Reseña no encontrada' });
+    }
+
+    data = review.reportes; //(review.reports || 0) + 1;
+
+    console.log('Reportes:', data); // Verificar que se estén contando los reportes
+
+    await review.update({ reportes: data + 1 });
+
+    if (review.reportes >= 10) {
+      await ReseñasModel.update({ estado: false }, { where: { id: reseñaId } });
+    }
+
+    res.status(200).send({ message: 'Reseña reportada exitosamente' });
+  } catch (error) {
+    console.error('Error al reportar la reseña:', error);
+    res.status(500).send({ error: 'Ocurrió un error al reportar la reseña' });
+  }
+});
+
+
 module.exports = router;
