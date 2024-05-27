@@ -14,4 +14,27 @@ router.get('/', async function (req, res) {
   res.json(comentarios)
 });
 
+router.get('/comentarios/:id', async (req, res)=>{
+  const reseñaID = req.params.id;
+  const comentarios = await ComentarioModel.findAll(
+    {
+      where: {reseñaID: reseñaID},
+      include: 
+      [{ model: UserModel, as: 'User', attributes: ['username'] },
+      ]
+  });
+  if(comentarios.length > 0){
+    res.json({data: comentarios});
+  } else {
+    res.json({data: 'No hay comentarios'});
+  }
+});
+
+router.post('/crear_comentario/:id', async (req, res) =>{
+  const {usuarioID, contenido, calificacion} = req.body;
+  const reseñaID = req.params.id;
+  const nuevoProducto = await ComentarioModel.create({ usuarioID, contenido, calificacion, reseñaID });
+  res.json({msg: 'Se añadio correctamente'})
+});
+
 module.exports = router;
