@@ -33,7 +33,7 @@ router.get('/comentarios/:id', async (req, res)=>{
 router.post('/crear_comentario/:id', async (req, res) =>{
   const {usuarioID, contenido, calificacion} = req.body;
   const reseñaID = req.params.id;
-  const nuevoProducto = await ComentarioModel.create({ usuarioID, contenido, calificacion, reseñaID });
+  var nuevoProducto = await ComentarioModel.create({  contenido, usuarioID, reseñaID, calificacion });
   res.json({msg: 'Se añadio correctamente'})
 });
 
