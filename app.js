@@ -5,13 +5,14 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const sequelize = require('./sequelize');
-const {DataTypes} = require('sequelize')
+const { DataTypes } = require('sequelize');
 const Token = require('./Modelos/token')(sequelize, DataTypes);
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const reseñasRouter = require('./routes/c_reseñas');
 const comentariosRouter = require('./routes/c_comentarios');
+
 const app = express();
 
 app.use(cors());
@@ -29,19 +30,15 @@ app.use('/api/users', usersRouter);
 app.use('/api/resenas', reseñasRouter);
 app.use('/api/comentarios', comentariosRouter);
 
-
 // Importar modelos
-//const Comentario = require('./Modelos/Comentario')(sequelize, Sequelize.DataTypes);
 const Producto = require('./Modelos/Producto');
 const User = require('./Modelos/User');
 const Review = require('./Modelos/Review');
 const Comentario = require('./Modelos/Comentario');
 
 // Definir asociaciones
-//Comentario.associate(sequelize.models);
-
 Review.associate({ Producto, User });
-Comentario.associate({Review, User});
+Comentario.associate({ Review, User });
 
 (async () => {
   try {
@@ -54,15 +51,6 @@ Comentario.associate({Review, User});
   }
 })();
 
-// Sincronizar modelos con la base de datos
-/*sequelize.sync({ force: true })
-  .then(() => {
-    console.log('Tablas sincronizadas correctamente.');
-  })
-  .catch((error) => {
-    console.error('Error al sincronizar tablas:', error);
-  });*/
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -70,11 +58,8 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
